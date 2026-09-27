@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ماموریت اتم | بازی آموزشی شیمی</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#08101d;color:#fff}
+.app{max-width:980px;margin:auto;min-height:100vh;padding:16px}
+.card{background:linear-gradient(145deg,#132238,#0d1728);border:1px solid #ffffff18;border-radius:28px;box-shadow:0 25px 80px #0008;overflow:hidden}
+header{padding:18px 22px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #fff1;gap:12px}
+.brand{font-weight:900;font-size:20px}.author{font-size:12px;color:#91a7c2}
+.hero{padding:28px;text-align:center}.hero h1{font-size:38px;margin:8px 0}.hero p{color:#b8c8da;line-height:2}
+.btn{border:0;border-radius:16px;padding:14px 24px;font-weight:900;font-size:17px;cursor:pointer}
+.start{background:#36d58b;color:#062014}.start:hover{transform:translateY(-2px)}
+.story{display:none}.scene{min-height:310px;position:relative;background:radial-gradient(circle at 50% 30%,#284a68,#101a2b 65%,#080e18);display:flex;align-items:center;justify-content:center}
+svg{width:100%;height:310px;display:block}.caption{padding:16px 22px;background:#0a1322;border-bottom:1px solid #fff1;font-size:17px;line-height:1.9}
+.caption b{color:#55e89d}.hud{display:flex;gap:8px;padding:14px 18px;flex-wrap:wrap}.pill{background:#ffffff0d;border:1px solid #ffffff14;padding:9px 13px;border-radius:13px;font-size:14px}
+.question{padding:22px}.chapter{font-size:13px;color:#55e89d;margin-bottom:8px}.qtext{font-size:23px;line-height:1.8;margin-bottom:18px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.opt{background:#edf3f8;color:#101c2b;border:0;border-radius:15px;padding:17px;text-align:right;font-size:16px;font-weight:800;cursor:pointer;min-height:66px}.opt:hover{background:#fff;transform:translateY(-2px)}
+.opt.ok{background:#36d58b;color:#062014}.opt.no{background:#ff6276;color:#fff}.opt:disabled{cursor:default}
+.feedback{margin-top:16px;padding:14px;border-radius:14px;background:#ffffff09;line-height:1.9;display:none}
+.next{display:none;margin-top:15px;background:#4ca9ff;color:#061522}.result{display:none;text-align:center;padding:35px}.result h2{font-size:32px}.big{font-size:60px;color:#55e89d;font-weight:900}
+@media(max-width:650px){.app{padding:7px}.hero{padding:25px 18px}.hero h1{font-size:29px}.options{grid-template-columns:1fr}.qtext{font-size:20px}.scene,svg{height:260px}}
+</style>
+</head>
+<body>
+<div class="app"><div class="card">
+
+<header><div class="brand">⚛️ ماموریت اتم</div><div class="author">طراحی آموزشی: مهندس فرید رحمانی</div></header>
+
+<section class="hero" id="intro">
+<div style="font-size:70px">🌌⚛️</div>
+<h1>ماموریت نجات جدول تناوبی</h1>
+<p>
+در آزمایشگاه مدرسه، «هستهٔ انرژی» از کار افتاده است.<br>
+برای فعال‌کردن آن باید سه رمز را پیدا کنی:<br>
+<strong>آرایش الکترونی</strong>، <strong>شعاع اتمی</strong> و <strong>واکنش‌پذیری فلزات و نافلزات</strong>.
+</p>
+<button class="btn start" onclick="begin()">شروع مأموریت 🚀</button>
+</section>
+
+<section class="story" id="story">
+<div class="hud">
+<div class="pill">🎯 امتیاز: <b id="score">0</b></div>
+<div class="pill">❤️ انرژی: <b id="energy">3</b></div>
+<div class="pill">🗺️ مرحله: <b id="stage">1</b> / 12</div>
+</div>
+<div class="scene" id="scene"></div>
+<div class="caption" id="caption"></div>
+<div class="question">
+<div class="chapter" id="chapter"></div>
+<div class="qtext" id="q"></div>
+<div class="options" id="opts"></div>
+<div class="feedback" id="feedback"></div>
+<button class="btn next" id="next" onclick="advance()">ادامهٔ مأموریت ←</button>
+</div>
+</section>
+
+<section class="result" id="result">
+<div style="font-size:75px">🏆</div><h2>ماموریت به پایان رسید!</h2>
+<div class="big" id="finalScore">0</div>
+<p id="resultText" style="line-height:2"></p>
+<button class="btn start" onclick="location.reload()">شروع دوباره 🔄</button>
+</section>
+
+</div></div>
+
+<script>
+const scenes={
+lab:`<svg viewBox="0 0 900 310"><rect width="900" height="310" fill="#101a2b"/><circle cx="450" cy="110" r="75" fill="#173a55" stroke="#55e89d" stroke-width="3"/><circle cx="450" cy="110" r="26" fill="#ffcf5a"/><circle cx="450" cy="110" r="10" fill="#fff"/><ellipse cx="450" cy="110" rx="115" ry="42" fill="none" stroke="#4ca9ff" stroke-width="4"/><ellipse cx="450" cy="110" rx="42" ry="115" fill="none" stroke="#4ca9ff" stroke-width="4"/><circle cx="338" cy="110" r="9" fill="#55e89d"/><circle cx="450" cy="-5" r="9" fill="#55e89d"/><rect x="150" y="205" width="600" height="12" rx="6" fill="#263b50"/><text x="450" y="270" fill="#fff" font-size="25" text-anchor="middle">آزمایشگاه اتمی مدرسه</text></svg>`,
+electron:`<svg viewBox="0 0 900 310"><rect width="900" height="310" fill="#101a2b"/><circle cx="450" cy="155" r="38" fill="#ffcf5a"/><text x="450" y="165" fill="#111" font-size="24" text-anchor="middle">Na</text><circle cx="450" cy="155" r="78" fill="none" stroke="#4ca9ff" stroke-width="3"/><circle cx="450" cy="155" r="125" fill="none" stroke="#55e89d" stroke-width="3"/><circle cx="372" cy="155" r="8" fill="#fff"/><circle cx="450" cy="30" r="8" fill="#fff"/><circle cx="575" cy="155" r="8" fill="#ff6276"/><text x="450" y="285" fill="#b8c8da" font-size="21" text-anchor="middle">لایه‌ها و الکترون‌ها در حال آشکار شدن‌اند...</text></svg>`,
+period:`<svg viewBox="0 0 900 310"><rect width="900" height="310" fill="#101a2b"/><g transform="translate(145 45)">`+
+Array.from({length:18},(_,i)=>{let x=(i%9)*68,y=Math.floor(i/9)*68;return `<rect x="${x}" y="${y}" width="58" height="58" rx="8" fill="${i===0?'#36d58b':'#19334b'}" stroke="#4ca9ff"/><text x="${x+29}" y="${y+37}" fill="#fff" font-size="17" text-anchor="middle">${i+1}</text>`}).join('')+
+`</g><text x="450" y="255" fill="#fff" font-size="24" text-anchor="middle">نقشهٔ جدول تناوبی فعال شد</text></svg>`,
+radius:`<svg viewBox="0 0 900 310"><rect width="900" height="310" fill="#101a2b"/><circle cx="275" cy="155" r="85" fill="#173a55" stroke="#55e89d" stroke-width="4"/><circle cx="620" cy="155" r="45" fill="#173a55" stroke="#4ca9ff" stroke-width="4"/><text x="275" y="164" fill="#fff" font-size="27" text-anchor="middle">شعاع بیشتر</text><text x="620" y="164" fill="#fff" font-size="22" text-anchor="middle">کمتر</text><path d="M360 155 H535" stroke="#ffcf5a" stroke-width="6" marker-end="url(#a)"/><text x="450" y="55" fill="#b8c8da" font-size="22" text-anchor="middle">حرکت در یک تناوب</text></svg>`,
+metal:`<svg viewBox="0 0 900 310"><rect width="900" height="310" fill="#101a2b"/><circle cx="260" cy="150" r="72" fill="#c9d1da"/><text x="260" y="158" fill="#172333" font-size="25" text-anchor="middle">فلز</text><path d="M345 150 Q450 75 555 150" fill="none" stroke="#ffcf5a" stroke-width="6"/><circle cx="640" cy="150" r="72" fill="#8ee8ff"/><text x="640" y="158" fill="#10202e" font-size="25" text-anchor="middle">نافلز</text><text x="450" y="270" fill="#fff" font-size="22" text-anchor="middle">الکترون‌ها در این نبرد نقش اصلی را دارند</text></svg>`,
+win:`<svg viewBox="0 0 900 310"><rect width="900" height="310" fill="#101a2b"/><circle cx="450" cy="145" r="85" fill="#ffcf5a"/><circle cx="450" cy="145" r="105" fill="none" stroke="#55e89d" stroke-width="6"/><path d="M405 145 l30 30 65 -75" fill="none" stroke="#101a2b" stroke-width="12"/><text x="450" y="285" fill="#55e89d" font-size="26" text-anchor="middle">هستهٔ انرژی دوباره فعال شد!</text></svg>`
+};
+
+const qs=[
+{c:"مرحله ۱ | رمز آرایش",s:"lab",cap:"چراغ‌های آزمایشگاه خاموش‌اند. دستگاه می‌گوید: «برای ورود، آرایش الکترونی عنصر با عدد اتمی 11 را پیدا کن.»",q:"آرایش الکترونی فشردهٔ سدیم (Na، عدد اتمی 11) کدام است؟",o:["[Ne] 3s¹","[He] 2s² 2p⁶","[Ne] 3p¹","[Ar] 4s¹"],a:0,e:"سدیم ۱۱ الکترون دارد؛ بعد از هستهٔ [Ne]، یک الکترون در 3s قرار می‌گیرد."},
+{c:"مرحله ۲ | رمز آرایش",s:"electron",cap:"آرایش درست ظاهر شد. یک مسیر انرژی باز می‌شود؛ اما برای عبور باید ترتیب پرشدن زیرلایه‌ها را تشخیص بدهی.",q:"پس از 1s و 2s، کدام زیرلایه زودتر پر می‌شود؟",o:["2p","3s","3p","4s"],a:0,e:"طبق ترتیب پرشدن، 2p پیش از 3s پر می‌شود."},
+{c:"مرحله ۳ | رمز آرایش",s:"electron",cap:"درب بعدی می‌پرسد: «اگر اتم 17 الکترون داشته باشد، چند الکترون ظرفیت دارد؟»",q:"کلر (Cl) با عدد اتمی 17 چند الکترون ظرفیت دارد؟",o:["1","2","7","8"],a:2,e:"آرایش کلر به 3s²3p⁵ ختم می‌شود؛ پس ۷ الکترون در لایهٔ ظرفیت دارد."},
+{c:"مرحله ۴ | ورود به جدول",s:"period",cap:"درِ بزرگ باز می‌شود و جدول تناوبی سه‌بعدی در اتاق شناور می‌شود. حالا باید مسیر حرکت در جدول را پیدا کنی.",q:"در یک گروه، از بالا به پایین تعداد لایه‌های الکترونی چه تغییری می‌کند؟",o:["کم می‌شود","زیاد می‌شود","ثابت می‌ماند","ابتدا زیاد و سپس کم می‌شود"],a:1,e:"با پایین رفتن در گروه، یک یا چند لایهٔ الکترونی جدید اضافه می‌شود."},
+{c:"مرحله ۵ | شعاع اتمی",s:"radius",cap:"دو اتم روی نقشه ظاهر می‌شوند. راهنمای دستگاه: «هرچه لایه‌ها و پوشش الکترونی بیشتر باشد، اتم گسترده‌تر است.»",q:"شعاع اتمی در یک گروه از بالا به پایین معمولاً چه تغییری می‌کند؟",o:["افزایش می‌یابد","کاهش می‌یابد","ثابت می‌ماند","صفر می‌شود"],a:0,e:"افزایش تعداد لایه‌های الکترونی باعث افزایش معمول شعاع اتمی می‌شود."},
+{c:"مرحله ۶ | شعاع اتمی",s:"radius",cap:"اکنون باید از چپ به راست از میان یک ردیف عبور کنی. هسته‌ها قوی‌تر الکترون‌ها را می‌کشند.",q:"در یک تناوب از چپ به راست، شعاع اتمی معمولاً چه تغییری می‌کند؟",o:["افزایش","کاهش","ثابت","ابتدا کاهش سپس افزایش"],a:1,e:"در یک تناوب، بار مؤثر هسته افزایش می‌یابد و کشش هسته بر الکترون‌ها بیشتر می‌شود؛ بنابراین شعاع کاهش می‌یابد."},
+{c:"مرحله ۷ | مقایسه",s:"radius",cap:"سه دروازه با نماد Na ،Mg و Cl روبه‌رویت هستند. فقط یکی مسیر کوتاه‌تر و درست را نشان می‌دهد.",q:"در دورهٔ سوم، کدام عنصر شعاع اتمی بیشتری دارد؟",o:["Na","Mg","Cl","هر سه برابرند"],a:0,e:"در یک دوره از چپ به راست شعاع کاهش می‌یابد؛ بنابراین Na در دورهٔ سوم شعاع بیشتری دارد."},
+{c:"مرحله ۸ | نبرد فلز و نافلز",s:"metal",cap:"حالا دو نیروی مقابل هم قرار می‌گیرند: فلز می‌خواهد الکترون بدهد و نافلز می‌خواهد الکترون بگیرد.",q:"در یک گروه فلزی، از بالا به پایین واکنش‌پذیری فلزات معمولاً چگونه تغییر می‌کند؟",o:["افزایش می‌یابد","کاهش می‌یابد","ثابت است","ابتدا افزایش سپس صفر"],a:0,e:"در فلزات، پایین رفتن گروه شعاع را بیشتر و جدا کردن الکترون ظرفیت را آسان‌تر می‌کند؛ در نتیجه تمایل به واکنش معمولاً بیشتر می‌شود."},
+{c:"مرحله ۹ | نبرد نافلز",s:"metal",cap:"این بار میدان برای نافلزها روشن می‌شود. هرچه به سمت بالای گروه بروی، گرفتن الکترون آسان‌تر می‌شود.",q:"در یک گروه از نافلزها، از بالا به پایین واکنش‌پذیری معمولاً چه تغییری می‌کند؟",o:["افزایش","کاهش","ثابت","اول زیاد سپس کم"],a:1,e:"در نافلزها، با پایین رفتن شعاع بیشتر می‌شود و جاذبهٔ هسته برای الکترون ورودی کاهش می‌یابد؛ بنابراین واکنش‌پذیری معمولاً کاهش می‌یابد."},
+{c:"مرحله ۱۰ | تشخیص قدرت",s:"metal",cap:"سه شعلهٔ واکنش ظاهر می‌شود. باید تشخیص بدهی کدام عنصر در میان این فلزها راحت‌تر الکترون از دست می‌دهد.",q:"کدام فلز در گروه ۱ معمولاً واکنش‌پذیرتر است؟",o:["Li","Na","K","همه برابرند"],a:2,e:"در گروه ۱ با پایین رفتن، از دست دادن الکترون آسان‌تر می‌شود؛ بنابراین K از Li و Na واکنش‌پذیرتر است."},
+{c:"مرحله ۱۱ | رمز نهایی",s:"electron",cap:"سه رمز کنار هم قرار گرفته‌اند. دستگاه آخرین سؤال را می‌پرسد: «آرایش الکترونی، رفتار عنصر را به جدول وصل می‌کند.»",q:"عنصری با آرایش [Ne]3s²3p⁵ در کدام گروه قرار دارد؟",o:["گروه 1","گروه 2","گروه 17","گروه 18"],a:2,e:"3s²3p⁵ یعنی ۷ الکترون ظرفیت؛ این الگو مربوط به هالوژن‌ها، یعنی گروه ۱۷ است."},
+{c:"مرحله ۱۲ | نجات جدول",s:"win",cap:"سه رمز کنار هم قرار می‌گیرند: آرایش الکترونی → جایگاه در جدول → شعاع و واکنش‌پذیری. هستهٔ انرژی آمادهٔ فعال شدن است.",q:"کدام زنجیرهٔ فکری درست‌تر است؟",o:["آرایش الکترونی ← جایگاه ← روندهای تناوبی","جرم اتمی ← رنگ عنصر ← گروه","شکل جامد ← دوره ← تعداد نوترون","چگالی ← آرایش ← بدون ارتباط با جدول"],a:0,e:"آرایش الکترونی، به‌ویژه الکترون‌های ظرفیت، در فهم گروه و بسیاری از روندهای تناوبی نقش اساسی دارد."}
+];
+
+let i=0,score=0,energy=3,locked=false;
+function begin(){intro.style.display="none";story.style.display="block";show();}
+function show(){
+ locked=false;stage.textContent=i+1;scoreEl=score;document.getElementById("score").textContent=score;document.getElementById("energy").textContent=energy;
+ const x=qs[i];document.getElementById("chapter").textContent=x.c;document.getElementById("caption").innerHTML=x.cap;
+ document.getElementById("scene").innerHTML=scenes[x.s];document.getElementById("q").textContent=x.q;
+ const box=document.getElementById("opts");box.innerHTML="";
+ x.o.forEach((t,n)=>{let b=document.createElement("button");b.className="opt";b.textContent=t;b.onclick=()=>answer(n,b);box.appendChild(b)});
+ feedback.style.display="none";next.style.display="none";
+}
+function answer(n,b){
+ if(locked)return;locked=true;
+ const x=qs[i],buttons=document.querySelectorAll(".opt");buttons.forEach(z=>z.disabled=true);
+ if(n===x.a){b.classList.add("ok");score+=100;document.getElementById("score").textContent=score;
+ feedback.innerHTML="✅ <b>درست!</b><br>"+x.e+"<br><br>🌟 مسیر داستان باز شد.";
+ }else{b.classList.add("no");energy--;document.getElementById("energy").textContent=energy;buttons[x.a].classList.add("ok");
+ feedback.innerHTML="❌ <b>این انتخاب درست نبود.</b><br>"+x.e+"<br><br>هنوز می‌توانی مأموریت را ادامه بدهی.";
+ }
+ feedback.style.display="block";next.style.display="inline-block";
+}
+function advance(){i++;if(i>=qs.length){story.style.display="none";result.style.display="block";document.getElementById("finalScore").textContent=score;
+let r=score>=1100?"دانشمند ارشد! سه مفهوم را به‌صورت زنجیره‌ای به هم وصل کردی.":score>=800?"ماموریت موفق بود؛ فقط چند نقطه نیاز به مرور دارد.":"ماموریت کامل شد؛ حالا می‌دانی دقیقاً کدام بخش‌ها را باید دوباره مرور کنی.";
+document.getElementById("resultText").textContent=r+" امتیاز شما: "+score+" از "+(qs.length*100)+"."; }else show();}
+</script>
+</body>
+</html>
